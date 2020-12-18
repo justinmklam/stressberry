@@ -27,9 +27,7 @@ def plot(argv=None):
             for d["temperature"], d["ambient"] in zip_object:
                 temperature_data.append(d["temperature"] - d["ambient"])
 
-        plt.plot(d["time"], temperature_data, label=d["name"])
-
-    dufte.legend()
+        plt.plot(d["time"], temperature_data, label="temperature")
 
     if args.delta_t:
         plot_yaxis_label = "Δ temperature [°C over ambient]"
@@ -52,7 +50,7 @@ def plot(argv=None):
                 ax2.plot(
                     d["time"],
                     d["cpu frequency"],
-                    label=d["name"],
+                    label="cpu frequency",
                     color="C1",
                     alpha=0.9,
                 )
@@ -60,6 +58,13 @@ def plot(argv=None):
             ax1.patch.set_visible(False)  # hide the 'canvas'
         except KeyError():
             print("Source data does not contain CPU frequency data.")
+
+        # Show labels on a single legend
+        lines, labels = ax1.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        ax2.legend(lines + lines2, labels + labels2, loc="lower left", mode="expand", ncol=3, bbox_to_anchor=(0,1.02,1,0.2))
+
+    plt.title(args.outfile.strip(".png"), y=1.08)
 
     if args.outfile is not None:
         plt.savefig(
